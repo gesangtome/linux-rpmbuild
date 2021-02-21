@@ -1,0 +1,23 @@
+From ce33f560e0e4b00fbb957d4911c15329f98de875 Mon Sep 17 00:00:00 2001
+From: Steven Barrett <steven@liquorix.net>
+Date: Wed, 24 Jun 2020 12:48:00 -0500
+Subject: [PATCH] muqss: Fix build error on config leak
+
+Fixes build error:
+error: include/uapi/linux/sched.h: leak CONFIG_SCHED_MUQSS to user-space
+---
+ scripts/headers_install.sh | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/scripts/headers_install.sh b/scripts/headers_install.sh
+index 224f51012b6e..21522d5608d8 100755
+--- a/scripts/headers_install.sh
++++ b/scripts/headers_install.sh
+@@ -91,6 +91,7 @@ include/uapi/linux/eventpoll.h:CONFIG_PM_SLEEP
+ include/uapi/linux/hw_breakpoint.h:CONFIG_HAVE_MIXED_BREAKPOINTS_REGS
+ include/uapi/linux/pktcdvd.h:CONFIG_CDROM_PKTCDVD_WCACHE
+ include/uapi/linux/raw.h:CONFIG_MAX_RAW_DEVS
++include/uapi/linux/sched.h:CONFIG_SCHED_MUQSS
+ "
+ 
+ for c in $configs
