@@ -43,7 +43,7 @@ pipeline {
                     stage('Apply ck-1 patches') {
                         steps {
                             dir('linux-5.11') {
-                                sh 'patch -p1 < ../patches/*.patch'
+                                sh 'for file in ../patches/*.patch; do patch -p1 $file; done'
                             }
                         }
                     }
