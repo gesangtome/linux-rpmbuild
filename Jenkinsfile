@@ -40,24 +40,24 @@ pipeline {
 
             stage('Apply patches') {
                 parallel {
-                    stage('Apply ck-1 patches') {
+                    stage('Apply kernel ck-1 patches') {
                         steps {
                             dir('linux-5.11') {
                                 sh 'for file in ../patches/*.patch; do patch -p1 $file; done'
                             }
                         }
                     }
-                    stage('Apply muqss fix patches') {
+                    stage('Apply misc patches') {
                         steps {
                             dir('linux-5.11') {
-                                sh 'patch -p1 < ../fix/*.patch'
+                                sh 'for file in ../misc/*.patch; do patch -p1 $file; done'
                             }
                         }
                     }
                 }
             }
 
-            stage('Generate .config') {
+            stage('Generate defconfig') {
                 steps {
                     dir('linux-5.11') {
                         sh 'yes "" | make oldconfig'

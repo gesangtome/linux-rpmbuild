@@ -1,0 +1,30 @@
+From cc0f9ad669195af85b869f9bef4ff97b219c24d0 Mon Sep 17 00:00:00 2001
+From: gesangtome <gesangtome@foxmail.com>
+Date: Mon, 22 Feb 2021 23:18:20 +0800
+Subject: [PATCH] Remove vmlinuz.bz from kernel rpm package
+
+This file contains debugging symbols.
+
+It is size is large, which will take up
+a lot of space in the /boot partition, and
+removing it will not cause the kernel to fail to boot.
+---
+ scripts/package/mkspec | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/scripts/package/mkspec b/scripts/package/mkspec
+index 7c477ca7d..dcd8729a9 100755
+--- a/scripts/package/mkspec
++++ b/scripts/package/mkspec
+@@ -94,8 +94,6 @@ $M	$MAKE %{?_smp_mflags} INSTALL_MOD_PATH=%{buildroot} modules_install
+ 	$MAKE %{?_smp_mflags} INSTALL_HDR_PATH=%{buildroot}/usr headers_install
+ 	cp System.map %{buildroot}/boot/System.map-$KERNELRELEASE
+ 	cp .config %{buildroot}/boot/config-$KERNELRELEASE
+-	bzip2 -9 --keep vmlinux
+-	mv vmlinux.bz2 %{buildroot}/boot/vmlinux-$KERNELRELEASE.bz2
+ $S$M	rm -f %{buildroot}/lib/modules/$KERNELRELEASE/build
+ $S$M	rm -f %{buildroot}/lib/modules/$KERNELRELEASE/source
+ $S$M	mkdir -p %{buildroot}/usr/src/kernels/$KERNELRELEASE
+-- 
+2.29.2
+
