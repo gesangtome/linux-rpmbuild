@@ -129,15 +129,18 @@ pipeline {
 
         success {
             dir('/mnt/jenkins/rpmbuild/RPMS') {
-                archiveArtifacts artifacts: 'aarch64/*.rpm',
+                archiveArtifacts artifacts: 'aarch64/kernel-*.rpm',
                 fingerprint: true,
                 onlyIfSuccessful: true
             }
         }
 
         cleanup {
-            dir('/mnt/jenkins/rpmbuild') {
-                sh returnStatus: true, script: '/usr/bin/rm -rf *'
+            dir('/mnt/jenkins/rpmbuild/') {
+                sh returnStatus: true, script: 'find . -iname "kernel*.rpm" | xargs /usr/bin/rm -rf'
+            }
+            dir('$WORKSPACE') {
+                sh returnStatus: true, script: 'git clean -fd'
             }
         }
     }
