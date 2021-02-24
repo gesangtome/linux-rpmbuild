@@ -2,11 +2,11 @@ pipeline {
         agent any
 
         stages {
-            stage('Allocate diskspace') {
+            stage('Allocate space') {
                 parallel {
                     stage('rpmbuild') {
                         steps {
-                            sh 'mkdir -p /mnt/jenkins/rpmbuild/{,BUILD,BUILDROOT,RPMS,SOURCES,SRPMS}'
+                            sh 'mkdir -p {BUILD,BUILDROOT,RPMS,SOURCES,SRPMS}'
                         }
                     }
                     stage('patch') {
@@ -66,10 +66,27 @@ pipeline {
             }
 
             stage('Build rpm packages') {
-                steps {
-					dir('linux-5.11') {
-						sh 'make binrpm-pkg'
-					}
+                parallel {
+                    stage('building kernel-devel') {
+                        steps {
+                            sh 'rpmbuild --define "_topdir ." -bb kernel-devel.spec'
+                        }
+                    }
+                    stage('building kernel-headers') {
+                        steps {
+                            sh 'rpmbuild --define "_topdir ." -bb kernel-headers.spec'
+                        }
+                    }
+                    stage('building kernel-modules') {
+                        steps {
+                            sh 'rpmbuild --define "_topdir ." -bb kernel-modules.spec'
+                        }
+                    }
+                    stage('building kernel') {
+                        steps {
+                            sh 'rpmbuild --define "_topdir ." -bb kernel.spec'
+                        }
+                    }
                 }
             }
         }
