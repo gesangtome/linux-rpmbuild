@@ -24,9 +24,6 @@ The package provides kernel modules built for this kernel version
 rm -f %{buildroot}/lib/modules//build
 rm -f %{buildroot}/lib/modules//source
 
-%clean
-rm -rf %{buildroot}/boot
-
 %files
 %defattr (-, root, root)
 /lib/modules//

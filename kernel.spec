@@ -51,9 +51,6 @@ if [ -x /sbin/update-bootloader ]; then
 /sbin/update-bootloader --remove 
 fi
 
-%clean
-rm -rf %{buildroot}/boot
-
 %files
 %defattr (-, root, root)
 /boot/*

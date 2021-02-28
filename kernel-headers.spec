@@ -26,9 +26,6 @@ echo "nothing to do ..."
 %install
  %{?_smp_mflags} INSTALL_HDR_PATH=%{buildroot}/usr headers_install
 
-%clean
-rm -rf %{buildroot}/boot
-
 %files
 %defattr (-, root, root)
 /usr/include
