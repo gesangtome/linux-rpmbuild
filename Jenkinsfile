@@ -161,7 +161,7 @@ pipeline {
         }
 
         success {
-            dir('/mnt/jenkins/rpmbuild/RPMS') {
+            dir('RPMS') {
                 archiveArtifacts artifacts: 'aarch64/kernel-*.rpm',
                 fingerprint: true,
                 onlyIfSuccessful: true
