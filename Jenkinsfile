@@ -56,14 +56,22 @@ pipeline {
                     }
                 }
             }
-
-            stage('Generate defconfig') {
-                steps {
-                    dir('linux-5.11') {
-                        sh 'yes "" | make oldconfig'
+	    stage('Prepareing') {
+		parallel {
+                    stage('Generate defconfig') {
+                        steps {
+                            dir('linux-5.11') {
+                                sh 'yes "" | make oldconfig'
+                            }
+                        }
                     }
-                }
-            }
+		    stage('Copying control script') {
+			steps {
+			    sh 'cp -r *.spec linux-5.11'
+			}
+		    }
+		}
+	    }
 
             stage('Build rpm packages') {
                 parallel {
