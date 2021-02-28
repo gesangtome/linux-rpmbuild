@@ -169,12 +169,7 @@ pipeline {
         }
 
         cleanup {
-            dir('/mnt/jenkins/rpmbuild/') {
-                sh returnStatus: true, script: 'find . -iname "kernel*.rpm" | xargs /usr/bin/rm -rf'
-            }
-            dir('$WORKSPACE') {
-                sh returnStatus: true, script: 'git clean -fd'
-            }
+            cleanWs deleteDirs: true
         }
     }
 }
