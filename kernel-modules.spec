@@ -24,6 +24,10 @@ The package provides kernel modules built for this kernel version
 rm -f %{buildroot}/lib/modules//build
 rm -f %{buildroot}/lib/modules//source
 
+cd %{buildroot}
+ln -sf /usr/src/kernels/%{version} build
+ln -sf build source
+
 %files
 %defattr (-, root, root)
 /lib/modules//
