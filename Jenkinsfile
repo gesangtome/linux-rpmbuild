@@ -67,19 +67,71 @@ pipeline {
                 }
             }
 
-            stage('Generate rpm source') {
+            stage('Generate source') {
                 steps {
                     dir('SOURCES') {
                         sh '''
                             mv linux-5.11 kernel-5.11.0 || false
-                            ln -sf kernel-5.11.0 kernel-devel-5.11.0 || false
-                            ln -sf kernel-5.11.0 kernel-headers-5.11.0 || false
-                            ln -sf kernel-5.11.0 kernel-modules-5.11.0 || false
-                            tar -zcvhf kernel-5.11.0.tar.gz kernel-5.11.0 --remove-files || false
-                            tar -zcvhf kernel-devel-5.11.0.tar.gz kernel-devel-5.11.0 --remove-files || false
-                            tar -zcvhf kernel-headers-5.11.0.tar.gz kernel-headers-5.11.0 --remove-files || false
-                            tar -zcvhf kernel-modules-5.11.0.tar.gz kernel-modules-5.11.0 --remove-files || false
                         '''
+                    }
+                }
+            }
+
+            stage('Generate links') {
+                parallel {
+                    stage('for kernel-devel') {
+                        steps {
+                            dir('SOURCES') {
+                                sh 'ln -sf kernel-5.11.0 kernel-devel-5.11.0 || false'
+                            }
+                        }
+                    }
+                    stage('for kernel-headers') {
+                        steps {
+                            dir('SOURCES') {
+                                sh 'ln -sf kernel-5.11.0 kernel-headers-5.11.0 || false'
+                            }
+                        }
+                    }
+                    stage('for kernel-modules') {
+                        steps {
+                            dir('SOURCES') {
+                                sh 'ln -sf kernel-5.11.0 kernel-modules-5.11.0 || false'
+                            }
+                        }
+                    }
+                }
+            }
+
+            stage('Generate rpm sources') {
+                parallel {
+                    stage('for kernel') {
+                        steps {
+                            dir('SOURCES') {
+                                sh 'tar -zcvhf kernel-5.11.0.tar.gz kernel-5.11.0 || false'
+                            }
+                        }
+                    }
+                    stage('for kernel-devel') {
+                        steps {
+                            dir('SOURCES') {
+                                sh 'tar -zcvhf kernel-devel-5.11.0.tar.gz kernel-devel-5.11.0 || false'
+                            }
+                        }
+                    }
+                    stage('for kernel-headers') {
+                        steps {
+                            dir('SOURCES') {
+                                sh 'tar -zcvhf kernel-headers-5.11.0.tar.gz kernel-headers-5.11.0 || false'
+                            }
+                        }
+                    }
+                    stage('for kernel-modules') {
+                        steps {
+                            dir('SOURCES') {
+                                sh 'tar -zcvhf kernel-modules-5.11.0.tar.gz kernel-modules-5.11.0 || false'
+                            }
+                        }
                     }
                 }
             }
