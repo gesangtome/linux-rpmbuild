@@ -24,6 +24,9 @@ mkdir -p %{buildroot}/usr/src/kernels/%{version}
 find . -iname "Makefile*" -o -iname "Kconfig*" -o -iname ".config" -o -iname "Module.symvers" -o -iname "System.map" -o -iname "vmlinux.id" > /tmp/filelist.txt
 cp -r --parent $(cat /tmp/filelist.txt) %{buildroot}/usr/src/kernels/%{version}
 
+%clean
+rm -rf /tmp/filelist.txt
+
 %files
 %defattr (-, root, root)
 /usr/src/kernels/%{version}
