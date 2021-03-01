@@ -21,7 +21,7 @@ pipeline {
                 parallel {
                     stage('download linux release') {
                         steps {
-                            sh 'wget -c https://mirrors.tuna.tsinghua.edu.cn/kernel/v5.x/linux-5.11.tar.xz'
+                            sh 'wget -P SOURCES https://mirrors.tuna.tsinghua.edu.cn/kernel/v5.x/linux-5.11.tar.xz'
                         }
                     }
                     stage('download ck-1 patches') {
@@ -34,7 +34,9 @@ pipeline {
 
             stage('Unzip archive') {
                 steps {
-                    sh 'xz -dc linux-5.11.tar.xz| tar -xvf -'
+                    dir('SOURCES') {
+                        sh 'xz -dc linux-5.11.tar.xz| tar -xvf -'
+                    }
                 }
             }
 
@@ -42,15 +44,15 @@ pipeline {
                 parallel {
                     stage('Apply kernel ck-1 patches') {
                         steps {
-                            dir('linux-5.11') {
-                                sh 'for file in ../patches/*.patch; do patch -p1 $file; done'
+                            dir('SOURCES/linux-5.11') {
+                                sh 'for file in ../../patches/*.patch; do patch -p1 $file; done'
                             }
                         }
                     }
                     stage('Apply misc patches') {
                         steps {
-                            dir('linux-5.11') {
-                                sh 'for file in ../misc/*.patch; do patch -p1 $file; done'
+                            dir('SOURCES/linux-5.11') {
+                                sh 'for file in ../../misc/*.patch; do patch -p1 $file; done'
                             }
                         }
                     }
@@ -59,41 +61,50 @@ pipeline {
 
             stage('Generate defconfig') {
                 steps {
-                    dir('linux-5.11') {
+                    dir('SOURCES/linux-5.11') {
                         sh 'yes "" | make oldconfig'
+                    }
+                }
+            }
+
+            stage('Generate rpm source') {
+                steps {
+                    dir('SOURCES') {
+                        sh '''
+                            mv linux-5.11 kernel-5.11.0 || false
+                            ln -sf kernel-5.11.0 kernel-devel-5.11.0 || false
+                            ln -sf kernel-5.11.0 kernel-headers-5.11.0 || false
+                            ln -sf kernel-5.11.0 kernel-modules-5.11.0 || false
+                            tar -zcvhf kernel-5.11.0.tar.gz kernel-5.11.0 --remove-files || false
+                            tar -zcvhf kernel-devel-5.11.0.tar.gz kernel-devel-5.11.0 --remove-files || false
+                            tar -zcvhf kernel-headers-5.11.0.tar.gz kernel-headers-5.11.0 --remove-files || false
+                            tar -zcvhf kernel-modules-5.11.0.tar.gz kernel-modules-5.11.0 --remove-files || false
+                        '''
                     }
                 }
             }
 
             stage('Build rpm packages') {
                 parallel {
+                    stage('building kernel') {
+                        steps {
+                            sh 'rpmbuild --define "_topdir $(pwd)" -bb kernel.spec'
+                        }
+                    }
                     stage('building kernel-devel') {
                         steps {
-			    dir('linux-5.11') {
-                                sh 'rpmbuild --define "_topdir ." -bb kernel-devel.spec'
-                            }
-			}
+                            sh 'rpmbuild --define "_topdir $(pwd)" -bb kernel-devel.spec'
+                        }
                     }
                     stage('building kernel-headers') {
                         steps {
-			    dir('linux-5.11') {
-                                sh 'rpmbuild --define "_topdir ." -bb kernel-headers.spec'
-			    }                        
-			}
+                            sh 'rpmbuild --define "_topdir $(pwd)" -bb kernel-headers.spec'
+                        }
                     }
                     stage('building kernel-modules') {
                         steps {
-			    dir('linux-5.11') {
-                                sh 'rpmbuild --define "_topdir ." -bb kernel-modules.spec'
-                            }
-			}
-                    }
-                    stage('building kernel') {
-                        steps {
-			    dir('linux-5.11') {
-                                sh 'rpmbuild --define "_topdir ." -bb kernel.spec'
-                            }
-			}
+                            sh 'rpmbuild --define "_topdir $(pwd)" -bb kernel-modules.spec'
+                        }
                     }
                 }
             }
