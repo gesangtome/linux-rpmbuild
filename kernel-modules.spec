@@ -6,8 +6,8 @@ License: GPL
 Group: System Environment/Kernel
 Vendor: The Linux Community
 URL: https://www.kernel.org
-Source: kernel-%{version}.tar.gz
-Provides: kernel-%{version}
+Source: %{name}-%{version}.tar.gz
+Provides: %{name}-%{version}
 %define __spec_install_post /usr/lib/rpm/brp-compress || :
 
 %description
