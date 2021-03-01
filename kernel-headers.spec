@@ -24,7 +24,7 @@ glibc package.
 echo "nothing to do ..."
 
 %install
- %{?_smp_mflags} INSTALL_HDR_PATH=%{buildroot}/usr headers_install
+make -j2 INSTALL_HDR_PATH=%{buildroot}/usr headers_install
 
 %files
 %defattr (-, root, root)

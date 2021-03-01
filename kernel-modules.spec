@@ -17,10 +17,10 @@ The package provides kernel modules built for this kernel version
 %setup -q
 
 %build
- %{?_smp_mflags} KBUILD_BUILD_VERSION=%{release} modules
+make KBUILD_BUILD_VERSION=%{release} modules
 
 %install
- %{?_smp_mflags} INSTALL_MOD_PATH=%{buildroot} modules_install
+make -j2 INSTALL_MOD_PATH=%{buildroot} modules_install
 rm -f %{buildroot}/lib/modules//build
 rm -f %{buildroot}/lib/modules//source
 
