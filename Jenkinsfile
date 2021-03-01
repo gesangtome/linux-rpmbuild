@@ -140,22 +140,22 @@ pipeline {
                 parallel {
                     stage('building kernel') {
                         steps {
-                            sh 'rpmbuild --define "_topdir $(pwd)" -bb kernel.spec'
+                            sh 'rpmbuild --define "_topdir $(pwd)" --define "%debug_package %{nil}" -bb kernel.spec'
                         }
                     }
                     stage('building kernel-devel') {
                         steps {
-                            sh 'rpmbuild --define "_topdir $(pwd)" -bb kernel-devel.spec'
+                            sh 'rpmbuild --define "_topdir $(pwd)" --define "%debug_package %{nil}" -bb kernel-devel.spec'
                         }
                     }
                     stage('building kernel-headers') {
                         steps {
-                            sh 'rpmbuild --define "_topdir $(pwd)" -bb kernel-headers.spec'
+                            sh 'rpmbuild --define "_topdir $(pwd)" --define "%debug_package %{nil}" -bb kernel-headers.spec'
                         }
                     }
                     stage('building kernel-modules') {
                         steps {
-                            sh 'rpmbuild --define "_topdir $(pwd)" -bb kernel-modules.spec'
+                            sh 'rpmbuild --define "_topdir $(pwd)" --define "%debug_package %{nil}" -bb kernel-modules.spec'
                         }
                     }
                 }
