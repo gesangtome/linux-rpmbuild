@@ -22,7 +22,7 @@ The Linux Kernel, the operating system core itself
 %setup -q
 
 %build
-make -j2 KBUILD_BUILD_VERSION=%{release} bzImage
+make -j2 KBUILD_BUILD_VERSION=%{release} Image.gz
 
 %install
 mkdir -p %{buildroot}/boot
