@@ -26,7 +26,7 @@ make -j2 KBUILD_BUILD_VERSION=%{release} Image.gz
 
 %install
 mkdir -p %{buildroot}/boot
-cp $( image_name) %{buildroot}/boot/vmlinuz-
+cp arch/arm64/boot/Image.gz %{buildroot}/boot/vmlinuz-
 cp System.map %{buildroot}/boot/System.map-
 cp .config %{buildroot}/boot/config-
 
