@@ -223,8 +223,8 @@ pipeline {
             }
         }
 
-        cleanup {
+        /* cleanup {
             cleanWs deleteDirs: true
-        }
+        } */
     }
 }
